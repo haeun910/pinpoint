@@ -1,0 +1,2 @@
+import http from 'node:http';import worker from '../dist/server/index.js';
+const server=http.createServer(async(req,res)=>{try{const response=await worker.fetch(new Request('http://localhost:5173'+req.url,{method:req.method}));res.writeHead(response.status,Object.fromEntries(response.headers));res.end(Buffer.from(await response.arrayBuffer()));}catch{res.writeHead(500);res.end('Server error')}});server.listen(5173,'0.0.0.0',()=>console.log('Local: http://localhost:5173/'));
