@@ -9,7 +9,14 @@ export const focusRules = [
 export function focusNotice(notice){
  if(notice.category==='청약')return {...notice,fields:['주거·청약']};
  if(!['채용','청년 지원','공모전'].includes(notice.category))return null;
- const content=[notice.title,...(notice.tags||[])].join(' ');
+ // Tags describe a notice, but are not evidence that its role is technical.
+ // roleEvidence must be extracted from the original duties/programme content.
+ const content=[notice.title,typeof notice.roleEvidence==='string'?notice.roleEvidence:''].join(' ');
+ const generalRole=/인사|총무|회계|재무|법무|영업|마케팅|고객\s*(?:상담|응대|지원)|채용\s*담당|\b(?:HR|sales|marketing|accounting|recruiter)\b/i.test(notice.title);
+ const technicalRole=focusRules.slice(1,4).some(([,rule])=>rule.test(content))||/(?:AI|ML|LLM|인공지능|머신러닝|딥러닝).{0,30}(?:연구|개발|엔지니어|모델링|학습|교육|강의|특강|활용\s*(?:과정|사례))|(?:연구|개발|엔지니어).{0,20}(?:AI|ML|LLM|인공지능)|\b(?:AI|ML|LLM)\s+(?:research|engineer|development|training|course|workshop)\b/i.test(content);
+ // An AI/IT employer can hire nontechnical staff. Keep mixed technical roles
+ // and AI training programmes when their duties provide explicit evidence.
+ if(generalRole&&!technicalRole)return null;
  const fields=focusRules.filter(([,rule])=>rule.test(content)).map(([name])=>name);
  return fields.length?{...notice,fields}:null;
 }

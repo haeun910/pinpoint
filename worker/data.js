@@ -1,33 +1,151 @@
 export const sources = [
-{id:'lh',name:'LH청약플러스',category:'청약',url:'https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026',match:'panId=',org:'LH'},
-{id:'naver',name:'NAVER Careers',category:'채용',url:'https://recruit.navercorp.com/rcrt/list.do',match:'annoId=',org:'NAVER 계열사'},
-{id:'alio',name:'잡알리오',category:'채용',url:'https://job.alio.go.kr/recruit.do',match:'idx=',org:'공공기관'},
-{id:'youth',name:'청년몽땅정보통',category:'청년 지원',url:'https://youth.seoul.go.kr/infoData/sprtInfo/list.do?key=2309130006',match:'sprtInfoId=',org:'서울시·청년센터'},
-{id:'contest',name:'콘테스트코리아',category:'공모전',url:'https://www.contestkorea.com/sub/list.php?int_gbn=1&Txt_bcode=030310001',match:'str_no=',org:'주최기관 원문 확인'},
-{id:'jobkorea',name:'잡코리아 · AI 채용',category:'채용',url:'https://www.jobkorea.co.kr/Search/?stext=AI',match:'/Recruit/GI_Read/',org:'채용 기업'},
-{id:'dacon',name:'DACON',category:'공모전',url:'https://www.dacon.io/competitions',match:'/competitions/official/',org:'대회별 주최기관 확인'},
-{id:'aichallenge',name:'전국민 AI 경진대회',category:'공모전',url:'https://aichallenge4all.or.kr/notice',match:'/notice/',org:'전국민 AI 경진대회'}
+  {
+    "id": "lh",
+    "name": "LH청약플러스",
+    "category": "청약",
+    "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+    "match": "panId=",
+    "org": "LH"
+  },
+  {
+    "id": "naver",
+    "name": "NAVER Careers",
+    "category": "채용",
+    "url": "https://recruit.navercorp.com/rcrt/list.do",
+    "match": "annoId=",
+    "org": "NAVER 계열사"
+  },
+  {
+    "id": "alio",
+    "name": "잡알리오",
+    "category": "채용",
+    "url": "https://job.alio.go.kr/recruit.do",
+    "match": "idx=",
+    "org": "공공기관"
+  },
+  {
+    "id": "youth",
+    "name": "청년몽땅정보통",
+    "category": "청년 지원",
+    "url": "https://youth.seoul.go.kr/infoData/sprtInfo/list.do?key=2309130006",
+    "match": "sprtInfoId=",
+    "org": "서울시·청년센터"
+  },
+  {
+    "id": "contest",
+    "name": "콘테스트코리아",
+    "category": "공모전",
+    "url": "https://www.contestkorea.com/sub/list.php?int_gbn=1&Txt_bcode=030310001",
+    "match": "str_no=",
+    "org": "주최기관 원문 확인"
+  },
+  {
+    "id": "jobkorea",
+    "name": "잡코리아 · AI 채용",
+    "category": "채용",
+    "url": "https://www.jobkorea.co.kr/Search/?stext=AI",
+    "match": "/Recruit/GI_Read/",
+    "org": "채용 기업"
+  },
+  {
+    "id": "dacon",
+    "name": "DACON",
+    "category": "공모전",
+    "url": "https://www.dacon.io/competitions",
+    "match": "/competitions/official/",
+    "org": "대회별 주최기관 확인"
+  },
+  {
+    "id": "aichallenge",
+    "name": "전국민 AI 경진대회",
+    "category": "공모전",
+    "url": "https://aichallenge4all.or.kr/notice",
+    "match": "/notice/",
+    "org": "전국민 AI 경진대회"
+  },
+  {
+    "id": "skt",
+    "name": "중앙대 · SKT FLY AI 모집 재공지",
+    "category": "청년 지원",
+    "url": "https://ai.cau.ac.kr/sub07/sub0701.php?category=1",
+    "org": "중앙대학교·SK텔레콤"
+  },
+  {
+    "id": "copyright",
+    "name": "한국저작권위원회",
+    "category": "공모전",
+    "url": "https://www.copyright.or.kr/notify/notice/list.do",
+    "org": "한국저작권위원회"
+  },
+  {
+    "id": "scnu",
+    "name": "국립순천대학교",
+    "category": "청년 지원",
+    "url": "https://ama.scnu.ac.kr/SCNU/main.do",
+    "org": "국립순천대학교"
+  }
 ];
 export const seed = [
-{id:'lh-seoul-20261001',source:'lh',category:'청약',org:'LH 서울지역본부',title:'26년 2차 비분양전환형 든든전세주택 입주자 모집',region:'서울',target:'원문 자격 확인',end:null,url:sources[0].url,summary:'LH 공고 목록에서 확인한 서울지역 모집 정보입니다. 공고명을 검색한 뒤 접수 일정·소득·자산 조건을 확인하세요.',tags:['전세주택','공고 목록 연결'],checked:'2026-10-15'},
-{id:'lh-gyeonggi-20260910',source:'lh',category:'청약',org:'LH 경기남부지역본부',title:'2026년 일반 매입임대주택 입주자 모집',region:'경기',target:'원문 자격 확인',end:null,url:sources[0].url,summary:'관할 주거복지지사 현장 접수 공고입니다. 온라인 접수 불가 안내가 있으므로 방문 장소와 신청 기간을 원문에서 확인하세요.',tags:['매입임대','현장 접수'],checked:'2026-10-15'},
+  {
+    "id": "lh-seoul-20261001",
+    "source": "lh",
+    "category": "청약",
+    "org": "LH 서울지역본부",
+    "title": "26년 2차 비분양전환형 든든전세주택 입주자 모집",
+    "region": "서울",
+    "target": "원문 자격 확인",
+    "end": null,
+    "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+    "summary": "LH 공고 목록에서 확인한 서울지역 모집 정보입니다. 공고명을 검색한 뒤 접수 일정·소득·자산 조건을 확인하세요.",
+    "tags": [
+      "전세주택",
+      "공고 목록 연결"
+    ],
+    "checked": "2026-10-15",
+    "verification": "listing"
+  },
+  {
+    "id": "lh-gyeonggi-20260910",
+    "source": "lh",
+    "category": "청약",
+    "org": "LH 경기남부지역본부",
+    "title": "2026년 일반 매입임대주택 입주자 모집",
+    "region": "경기",
+    "target": "원문 자격 확인",
+    "end": null,
+    "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+    "summary": "관할 주거복지지사 현장 접수 공고입니다. 온라인 접수 불가 안내가 있으므로 방문 장소와 신청 기간을 원문에서 확인하세요.",
+    "tags": [
+      "매입임대",
+      "현장 접수"
+    ],
+    "checked": "2026-10-15",
+    "verification": "listing"
+  },
   {
     "id": "jobkorea-50082976",
     "source": "jobkorea",
     "category": "채용",
     "org": "NC AI",
     "title": "산업 특화 AI Agent 연구개발 담당자 모집",
-    "region": "원문 확인",
-    "target": "세부 경력·자격 원문 확인",
+    "region": "경기",
+    "target": "경력 무관 · 학력 무관",
     "end": "2026-10-30",
     "url": "https://www.jobkorea.co.kr/Recruit/GI_Read/50082976",
     "summary": "산업 특화 AI Agent 연구개발 채용 공고입니다. 잡코리아에 표시된 종료일은 10월 30일이며, 충원 시 조기 마감될 수 있습니다. 담당 업무와 지원 자격은 원문에서 확인하세요.",
     "tags": [
       "AI",
-      "연구개발",
+      "정규직",
       "충원 시 마감"
     ],
-    "checked": "2026-10-15"
+    "checked": "2026-10-15",
+    "verification": "detail",
+    "recommendationNote": "경력 무관으로 표시된 AI Agent 연구개발 채용이어서 신입 취업 후보로 검토할 만합니다.",
+    "recommendationChecks": [
+      "신입에게 요구하는 개발 역량·프로젝트 경험과 세부 필수 자격 확인",
+      "경기 지역의 정확한 근무지와 근무 조건 확인",
+      "10월 30일 이전 충원에 따른 조기 마감 여부 확인"
+    ]
   },
   {
     "id": "youth-74414",
@@ -36,16 +154,17 @@ export const seed = [
     "org": "서울청년센터 도봉",
     "title": "AI 활용 보고서 작성 및 엑셀 데이터 분석 특강",
     "region": "서울",
-    "target": "취업준비 청년·직장인 청년",
+    "target": "서울시 청년 · 도봉구 기준 만19~45세",
     "end": "2026-10-26",
     "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=74414",
-    "summary": "청년자립메이커 실습 특강입니다. 일정 변경 후 재모집 중이며 3·4회차는 10월 26일 23:59까지 신청 안내가 있습니다. 회차별 일정은 원문을 확인하세요.",
+    "summary": "AI 보고서 작성·엑셀 데이터 분석 실습 특강입니다. 1·2회차는 마감됐으며 직장인 대상 3·4회차는 10월 26일 23:59까지 신청 안내가 있습니다. 도봉구 거주·생활 청년 우선이며 개인 노트북 또는 태블릿이 필요합니다.",
     "tags": [
       "AI 활용",
       "데이터 분석",
       "취업 역량"
     ],
-    "checked": "2026-10-15"
+    "checked": "2026-10-15",
+    "verification": "detail"
   },
   {
     "id": "dacon-236771",
@@ -63,7 +182,8 @@ export const seed = [
       "알고리즘",
       "상금 950만원"
     ],
-    "checked": "2026-10-15"
+    "checked": "2026-10-15",
+    "verification": "detail"
   },
   {
     "id": "aichallenge-cmtjpa73f000m149hjskkpv4x",
@@ -81,7 +201,8 @@ export const seed = [
       "콘텐츠",
       "개인 참여"
     ],
-    "checked": "2026-10-15"
+    "checked": "2026-10-15",
+    "verification": "detail"
   },
   {
     "id": "youth-73500",
@@ -98,6 +219,102 @@ export const seed = [
       "AI",
       "풀스택",
       "데이터 수집"
+    ],
+    "checked": "2026-10-15",
+    "verification": "search"
+  },
+  {
+    "id": "skt-flyai-10",
+    "source": "skt",
+    "category": "청년 지원",
+    "title": "SK텔레콤 FLY AI Challenger 10기 모집",
+    "org": "SK텔레콤",
+    "region": "서울",
+    "target": "미취업 학사·졸업예정자 등 · K-디지털 트레이닝 요건 확인",
+    "end": "2026-11-08",
+    "url": "https://ai.cau.ac.kr/sub07/sub0701.php?category=1&no=3682&view=detail",
+    "verification": "detail",
+    "summary": "중앙대학교 공식 재공지에서 모집기간과 지원 요건을 확인했습니다. 4년제 3학년 이상, 2~3년제 2학년 이상도 지원 가능 안내가 있습니다. 교육은 12월 18일~2027년 2월 26일 총 420시간이며 통학이 필요합니다. 국민내일배움카드 및 수강 이력 조건은 원문을 확인하세요.",
+    "tags": [
+      "AI",
+      "교육",
+      "K-디지털 트레이닝"
+    ],
+    "checked": "2026-10-15",
+    "recommendationNote": "총 420시간의 AI 교육 과정으로, 취업 준비를 위한 집중 교육 후보로 살펴볼 만합니다.",
+    "recommendationChecks": [
+      "학년·졸업 상태와 미취업 등 지원 요건 확인",
+      "국민내일배움카드 및 K-디지털 트레이닝 수강 이력 조건 확인",
+      "교육 기간과 서울 통학 가능 여부 확인"
+    ]
+  },
+  {
+    "id": "copyright-55950",
+    "source": "copyright",
+    "category": "공모전",
+    "title": "2026 AI 활용 저작권 콘텐츠 공모전",
+    "org": "문화체육관광부·한국저작권위원회",
+    "region": "전국",
+    "target": "대한민국 국민 누구나",
+    "end": "2026-10-25",
+    "url": "https://www.copyright.or.kr/notify/notice/view.do?brdctsno=55950",
+    "verification": "detail",
+    "summary": "생성형 AI로 저작권 관련 이미지나 숏폼 영상을 제작하는 공모전입니다. 공식 공지에서 9월 21일~10월 25일 접수기간과 참가 대상을 확인했습니다.",
+    "tags": [
+      "AI 활용",
+      "콘텐츠",
+      "숏폼"
+    ],
+    "checked": "2026-10-15",
+    "recommendationNote": "생성형 AI로 이미지나 숏폼을 제작하는 공모전으로, AI 활용 결과물을 만들어 보는 활동 후보입니다.",
+    "recommendationChecks": [
+      "국민 대상 조건과 개인·팀 참가 규칙 확인",
+      "제출물 규격과 저작권 관련 규정 확인",
+      "10월 25일 정확한 접수 마감 시각 확인"
+    ]
+  },
+  {
+    "id": "scnu-ai-20261002",
+    "source": "scnu",
+    "category": "청년 지원",
+    "title": "2026년 청년도약 AI인재양성 부트캠프 교육생 모집",
+    "org": "국립순천대학교 AI인재양성부트캠프사업단",
+    "region": "전남",
+    "target": "만19~34세 미취업 청년 · 전공·학력·지역 무관",
+    "end": null,
+    "url": "https://ama.scnu.ac.kr/SCNU/na/ntt/selectNttInfo.do?mi=1131&nttSn=281321624",
+    "verification": "detail",
+    "summary": "공식 대학 공지에서 상시 모집을 확인했습니다. AI 기초, 클라우드 프로젝트, 채용연계형 인턴십과 원거리 청년 숙박 제공을 안내합니다. 회차별 잔여 정원과 참여 요건은 신청처에서 확인하세요.",
+    "tags": [
+      "AI",
+      "클라우드",
+      "교육",
+      "상시 모집"
+    ],
+    "checked": "2026-10-15",
+    "recommendationNote": "AI 기초 교육부터 클라우드 프로젝트와 채용연계형 인턴십까지 안내해 입문 교육·인턴 관심에 맞는 탐색 후보입니다.",
+    "recommendationChecks": [
+      "만19~34세 및 미취업 조건 확인",
+      "상시 모집 회차의 잔여 정원과 실제 교육·인턴십 참여 조건 확인",
+      "전남 교육장 참여 가능 여부와 원거리 숙박 제공 조건 확인"
+    ]
+  },
+  {
+    "id": "lh-uiryeong-20261015",
+    "source": "lh",
+    "category": "청약",
+    "title": "의령동동 행복주택 예비입주자 정례모집 · 공급대상 확대 및 자격완화 정정공고",
+    "org": "LH",
+    "region": "경남",
+    "target": "입주 자격 원문 확인",
+    "end": null,
+    "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+    "verification": "listing",
+    "summary": "LH 공식 임대주택 목록에서 10월 15일 정정공고를 확인했습니다. 상세 공고를 확인하지 못해 신청 마감일과 자격은 확정하지 않았습니다. 해당 공고명을 검색해 정정 내용과 신청 일정을 확인하세요.",
+    "tags": [
+      "행복주택",
+      "정정공고",
+      "공고 목록 연결"
     ],
     "checked": "2026-10-15"
   }
