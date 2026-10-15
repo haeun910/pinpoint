@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-15T11:50:42.584Z",
+  "updatedAt": "2026-10-15T11:52:23.314Z",
   "items": [
     {
       "id": "lh-seoul-20261001",
@@ -424,5 +424,13 @@
       "url": "https://ama.scnu.ac.kr/SCNU/main.do",
       "org": "국립순천대학교"
     }
-  ]
+  ],
+  "pipeline": {
+    "version": 1,
+    "stages": [
+      "공고 확인",
+      "분류·필터링",
+      "추천"
+    ]
+  }
 }
