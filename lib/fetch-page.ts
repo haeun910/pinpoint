@@ -63,6 +63,47 @@ function guardedLookup(hostname: string, options: { all?: boolean }, cb: LookupC
 const agent = new Agent({ connect: { lookup: guardedLookup as never } });
 
 export const MAX_TEXT = 30_000;
+/** 본문을 정리하기 전에 받을 최대 크기. 큰 파일이 서버 메모리를 다 쓰지 않게 받는 도중에 끊는다. */
+export const MAX_BYTES = 2_000_000;
+
+/** 응답 본문을 최대 limit 바이트까지만 읽는다. 넘치면 나머지는 받지 않고 끊는다. */
+type ByteStream = { getReader(): { read(): Promise<{ done: boolean; value?: Uint8Array }>; cancel(): Promise<void> } };
+
+export async function readLimited(body: ByteStream | null, limit: number): Promise<Uint8Array> {
+  if (!body) return new Uint8Array();
+  const reader = body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done || !value) break;
+    const room = limit - size;
+    chunks.push(value.length > room ? value.subarray(0, room) : value);
+    size += Math.min(value.length, room);
+    if (size >= limit) {
+      await reader.cancel();
+      break;
+    }
+  }
+  const out = new Uint8Array(size);
+  let at = 0;
+  for (const c of chunks) {
+    out.set(c, at);
+    at += c.length;
+  }
+  return out;
+}
+
+/** content-type이나 meta 태그에 적힌 문자 집합(EUC-KR 등)으로 해석한다. 없으면 UTF-8. */
+function decode(bytes: Uint8Array, contentType: string): string {
+  const head = new TextDecoder("latin1").decode(bytes.subarray(0, 2048));
+  const label = (contentType.match(/charset=["']?([\w-]+)/i) ?? head.match(/<meta[^>]+charset=["']?([\w-]+)/i))?.[1] ?? "utf-8";
+  try {
+    return new TextDecoder(label).decode(bytes);
+  } catch {
+    return new TextDecoder("utf-8").decode(bytes);
+  }
+}
 const MAX_REDIRECTS = 5;
 const BLOCKED = "이 주소는 열 수 없어요.";
 
@@ -91,7 +132,12 @@ export async function fetchPageText(raw: string): Promise<string> {
       continue;
     }
     if (!r.ok) throw new Error(`페이지를 열지 못했어요 (HTTP ${r.status}).`);
-    const text = cleanHtml(await r.text());
+    const type = r.headers.get("content-type") ?? "";
+    if (type && !/^text\/(html|plain)|xhtml/i.test(type)) {
+      await r.body?.cancel();
+      throw new Error("공고 페이지가 아니에요(HTML이 아닌 파일). 본문을 직접 붙여넣어 주세요.");
+    }
+    const text = cleanHtml(decode(await readLimited(r.body, MAX_BYTES), type));
     if (text.length < 50) throw new Error("페이지에서 공고 내용을 찾지 못했어요. 본문을 직접 붙여넣어 주세요.");
     return text.slice(0, MAX_TEXT);
   }

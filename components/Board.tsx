@@ -29,7 +29,20 @@ const WD = "일월화수목금토";
 
 export function Board() {
   const [today, setToday] = useState<string | null>(null);
-  useEffect(() => setToday(toISODate(new Date())), []);
+  // 날짜는 브라우저에서 정한다. 탭을 밤새 열어 두거나 다음 날 다시 돌아와도 오늘 날짜를 다시 잡는다.
+  useEffect(() => {
+    const refresh = () => setToday(toISODate(new Date()));
+    refresh();
+    const timer = setInterval(refresh, 60_000);
+    const onVisible = () => document.visibilityState === "visible" && refresh();
+    document.addEventListener("visibilitychange", onVisible);
+    addEventListener("focus", refresh);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+      removeEventListener("focus", refresh);
+    };
+  }, []);
   if (!today) return <IconSprite />;
   return <BoardInner today={today} />;
 }
@@ -139,7 +152,8 @@ function BoardInner({ today }: { today: string }) {
   return (
     <>
       <IconSprite />
-      <div className="app">
+      {/* 상세 패널이나 공고 추가 창이 열려 있으면 뒤쪽 화면은 포커스도 클릭도 받지 않게 한다 */}
+      <div className="app" inert={!!open || adding}>
         <aside className="side" aria-label="메뉴">
           <a className="logo" href="#" aria-label="핀포인트 홈" onClick={() => setView("all")}>
             <Logo />

@@ -21,8 +21,11 @@ type Props = {
 export function DetailPanel({ posting: p, pin, today, onClose, onTogglePin, onToggleItem, onStage, onDelete }: Props) {
   const closeRef = useRef<HTMLButtonElement>(null);
   // 처음 열릴 때만 포커스를 옮긴다. 체크박스를 누를 때마다 다시 그려져도 포커스가 튀지 않게.
+  // 뒤쪽 화면은 Board에서 inert로 막는다.
   useEffect(() => {
+    const before = document.activeElement as HTMLElement | null;
     closeRef.current?.focus();
+    return () => before?.focus?.(); // 닫으면 열기 전에 있던 자리로 포커스를 돌려준다
   }, []);
   useEscape(onClose);
 
