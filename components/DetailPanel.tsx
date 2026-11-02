@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { daysUntil, ddayLabel, formatShort } from "@/lib/dates.ts";
 import { STAGES, type Pin, type Posting, type Stage } from "@/lib/types.ts";
 import { Icon } from "./Icons.tsx";
@@ -16,9 +16,13 @@ type Props = {
   onToggleItem: (itemId: string) => void;
   onStage: (stage: Stage) => void;
   onDelete?: () => void;
+  /** 링크만 있는 공고를 AI로 자세히 정리. 실패하면 오류 문구를 돌려준다 */
+  onRefine?: () => Promise<string | null>;
 };
 
-export function DetailPanel({ posting: p, pin, today, onClose, onTogglePin, onToggleItem, onStage, onDelete }: Props) {
+export function DetailPanel({ posting: p, pin, today, onClose, onTogglePin, onToggleItem, onStage, onDelete, onRefine }: Props) {
+  const [refining, setRefining] = useState(false);
+  const [refineError, setRefineError] = useState<string | null>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   // 처음 열릴 때만 포커스를 옮긴다. 체크박스를 누를 때마다 다시 그려져도 포커스가 튀지 않게.
   // 뒤쪽 화면은 Board에서 inert로 막는다.
@@ -68,6 +72,25 @@ export function DetailPanel({ posting: p, pin, today, onClose, onTogglePin, onTo
             )}
           </div>
 
+          {onRefine && (
+            <div className="refine">
+              <p>목록에서 링크만 모은 공고라 마감일과 자격요건이 비어 있어요.</p>
+              <button
+                className="btn"
+                disabled={refining}
+                onClick={async () => {
+                  setRefining(true);
+                  setRefineError(null);
+                  setRefineError(await onRefine());
+                  setRefining(false);
+                }}
+              >
+                {refining ? "AI가 원문을 읽는 중…" : "AI로 원문 읽고 자세히 정리"}
+              </button>
+              {refineError && <div className="err" role="alert">{refineError}</div>}
+            </div>
+          )}
+
           {pin && isJob && (
             <>
               <section className="p-section" aria-label="지원 단계">
@@ -106,9 +129,9 @@ export function DetailPanel({ posting: p, pin, today, onClose, onTogglePin, onTo
           )}
 
           <dl>
-            {p.role && (<><dt>직무</dt><dd>{p.role}</dd></>)}
+            {p.role && (<><dt>{isJob ? "직무" : "분야"}</dt><dd>{p.role}</dd></>)}
             <dt>지역</dt><dd>{p.region}</dd>
-            {p.employment && (<><dt>고용 형태</dt><dd>{p.employment}</dd></>)}
+            {p.employment && (<><dt>{isJob ? "고용 형태" : "대상"}</dt><dd>{p.employment}</dd></>)}
             {p.documents.length > 0 && (<><dt>제출 서류</dt><dd>{p.documents.join(", ")}</dd></>)}
           </dl>
 

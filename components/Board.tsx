@@ -83,7 +83,10 @@ function BoardInner({ today }: { today: string }) {
 
   const all = useMemo(() => {
     const map = new Map<string, Posting>();
-    for (const p of [...saved, ...collected, ...(showSamples ? samplePostings(today) : [])]) if (!map.has(p.id)) map.set(p.id, p);
+    // 저장해 둔 목록 수집분(링크만 있는 공고)은 새로 정리된 공고가 있으면 그것으로 바꿔 보여준다
+    const savedFull = saved.filter((p) => p.source !== "collector");
+    const savedThin = saved.filter((p) => p.source === "collector");
+    for (const p of [...savedFull, ...collected, ...savedThin, ...(showSamples ? samplePostings(today) : [])]) if (!map.has(p.id)) map.set(p.id, p);
     // 핀한 공고는 목록에서 사라졌어도 남긴다
     return [...map.values()];
   }, [saved, collected, showSamples, today]);
@@ -137,6 +140,35 @@ function BoardInner({ today }: { today: string }) {
 
   // 핀한 공고가 목록에서 사라지지 않도록 공고 내용도 저장해 둔다
   const keep = useCallback((p: Posting) => setSaved((prev) => (prev.some((x) => x.id === p.id) ? prev : [p, ...prev])), [setSaved]);
+
+  /** 링크만 있는 공고의 원문을 AI로 읽어 자세히 채운다. 핀해 둔 공고면 체크리스트도 새 마감일로 다시 짠다(완료 표시는 유지). */
+  const refine = useCallback(
+    async (p: Posting): Promise<string | null> => {
+      if (!p.url) return "원문 링크가 없어요.";
+      try {
+        const r = await fetch("/api/extract", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: p.url }),
+        });
+        const data = (await r.json().catch(() => ({}))) as { posting?: Posting; error?: string };
+        if (!r.ok || !data.posting) return data.error ?? "원문을 정리하지 못했어요.";
+        const next: Posting = { ...data.posting, id: p.id, url: p.url, source: "agent", checkedAt: today, addedAt: p.addedAt };
+        setSaved((prev) => [next, ...prev.filter((x) => x.id !== p.id)]);
+        setPins((prev) =>
+          prev.map((pin) => {
+            if (pin.postingId !== p.id || next.category !== "job") return pin;
+            const done = new Set(pin.checklist.filter((i) => i.done).map((i) => i.id));
+            return { ...pin, checklist: buildChecklist(next, pin.pinnedAt).map((i) => ({ ...i, done: done.has(i.id) })) };
+          }),
+        );
+        return null;
+      } catch {
+        return "서버에 연결하지 못했어요.";
+      }
+    },
+    [setSaved, setPins, today],
+  );
 
   const open = openId ? all.find((p) => p.id === openId) : undefined;
   const weekDays = Array.from({ length: 8 }, (_, n) => addDays(today, n));
@@ -375,6 +407,7 @@ function BoardInner({ today }: { today: string }) {
           onToggleItem={(itemId) =>
             setPins((prev) => prev.map((x) => (x.postingId === open.id ? { ...x, checklist: x.checklist.map((i) => (i.id === itemId ? { ...i, done: !i.done } : i)) } : x)))
           }
+          onRefine={open.source === "collector" && open.url ? () => refine(open) : undefined}
           onStage={(stage) => setPins((prev) => prev.map((x) => (x.postingId === open.id ? { ...x, stage } : x)))}
           onDelete={
             open.source === "paste"
