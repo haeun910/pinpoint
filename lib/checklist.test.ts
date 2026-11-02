@@ -62,3 +62,10 @@ test("마감이 임박한 공고는 지난 기한 대신 핀한 날을 기한으
   assert.equal(byId["final-check"].due, "2026-11-03");
   assert.equal(byId["submit"].due, "2026-11-04");
 });
+
+test("마감일을 모르는 공고는 상시로 치지 않고 기한을 비워 둔다", () => {
+  const posting = { ...base, deadline: null, deadlineUnknown: true };
+  const list = buildChecklist(posting, "2026-11-02");
+  assert.equal(list[0].id, "deadline");
+  assert.ok(list.every((i) => i.due === null));
+});

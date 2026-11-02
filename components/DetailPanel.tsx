@@ -5,6 +5,7 @@ import { daysUntil, ddayLabel, formatShort } from "@/lib/dates.ts";
 import { STAGES, type Pin, type Posting, type Stage } from "@/lib/types.ts";
 import { Icon } from "./Icons.tsx";
 import { badgeFor } from "./PostingCard.tsx";
+import { useEscape } from "./useEscape.ts";
 
 type Props = {
   posting: Posting;
@@ -19,12 +20,11 @@ type Props = {
 
 export function DetailPanel({ posting: p, pin, today, onClose, onTogglePin, onToggleItem, onStage, onDelete }: Props) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  // 처음 열릴 때만 포커스를 옮긴다. 체크박스를 누를 때마다 다시 그려져도 포커스가 튀지 않게.
   useEffect(() => {
     closeRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    addEventListener("keydown", onKey);
-    return () => removeEventListener("keydown", onKey);
-  }, [onClose]);
+  }, []);
+  useEscape(onClose);
 
   const badge = badgeFor(p);
   const done = pin?.checklist.filter((i) => i.done).length ?? 0;

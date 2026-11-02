@@ -7,11 +7,15 @@ type Step = { key: string; label: string; offset: number | null };
  * 핀한 공고의 체크리스트를 만든다.
  * offset은 마감일 기준 며칠 전/후인지(음수 = 전). null이면 기한 없음.
  * 상시 채용이면 핀한 날부터 2주 안에 지원한다고 보고 기준일을 잡는다.
+ * 마감일을 모르는 공고(deadlineUnknown)는 상시 채용으로 치지 않고, 기한을 비워 둔 채
+ * "원문에서 마감일 확인" 항목을 맨 앞에 넣는다. 확인되지 않은 날짜를 지어내지 않기 위해서다.
  * 마감이 가까워 계산한 기한이 핀한 날보다 앞서면 핀한 날로 당긴다(핀하자마자 '지연'이 뜨지 않게).
  */
 export function buildChecklist(posting: Posting, pinnedOn: string): ChecklistItem[] {
+  const unknown = posting.deadline === null && posting.deadlineUnknown === true;
   const anchor = posting.deadline ?? addDays(pinnedOn, 14);
   const steps: Step[] = [
+    ...(unknown ? [{ key: "deadline", label: "원문에서 마감일 확인하기 (확인 전에는 기한을 비워 둬요)", offset: null }] : []),
     { key: "qualify", label: "자격요건·우대사항이 나와 맞는지 확인", offset: null },
     { key: "docs", label: `제출 서류 확인${posting.documents.length ? `: ${posting.documents.join(", ")}` : ""}`, offset: null },
   ];
@@ -43,7 +47,7 @@ export function buildChecklist(posting: Posting, pinnedOn: string): ChecklistIte
   return steps.map((s) => ({
     id: s.key,
     label: s.label,
-    due: s.offset === null ? null : laterOf(addDays(anchor, s.offset), pinnedOn),
+    due: s.offset === null || unknown ? null : laterOf(addDays(anchor, s.offset), pinnedOn),
     done: false,
   }));
 }

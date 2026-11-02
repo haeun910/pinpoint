@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { formatShort } from "@/lib/dates.ts";
 import { CATEGORIES, type Posting } from "@/lib/types.ts";
 import { badgeFor } from "./PostingCard.tsx";
+import { useEscape } from "./useEscape.ts";
 
 type Props = {
   onClose: () => void;
@@ -19,12 +20,11 @@ export function AddDialog({ onClose, onSave }: Props) {
   const [draft, setDraft] = useState<Posting | null>(null);
   const firstRef = useRef<HTMLInputElement>(null);
 
+  // 처음 열릴 때만 포커스를 옮긴다. 체크박스를 누를 때마다 다시 그려져도 포커스가 튀지 않게.
   useEffect(() => {
     firstRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    addEventListener("keydown", onKey);
-    return () => removeEventListener("keydown", onKey);
-  }, [onClose]);
+  }, []);
+  useEscape(onClose);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();

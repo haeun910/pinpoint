@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { buildChecklist } from "@/lib/checklist.ts";
 import { looksLikeTech } from "@/lib/collect.ts";
 import { addDays, daysUntil, toISODate } from "@/lib/dates.ts";
+import { REGION_OPTIONS, regionMatches } from "@/lib/region.ts";
 import { samplePostings } from "@/lib/sample.ts";
 import { useStoredState } from "@/lib/store.ts";
 import { CATEGORIES, COMPANY_TYPES, type Category, type CompanyType, type Pin, type Posting, type Sector } from "@/lib/types.ts";
@@ -96,7 +97,7 @@ function BoardInner({ today }: { today: string }) {
         if (types.length && (!p.companyType || !types.includes(p.companyType))) return false;
         if (techOnly && !looksLikeTech(`${p.title} ${p.role}`)) return false;
       }
-      if (region && p.region !== region && p.region !== "전국") return false;
+      if (!regionMatches(p.region, region)) return false;
       if (weekOnly && (p.deadline === null || daysUntil(p.deadline, today) > 7)) return false;
       if (needle && ![p.title, p.company, p.role, p.region, ...p.requirements, ...p.preferred].join(" ").toLowerCase().includes(needle)) return false;
       return true;
@@ -194,6 +195,18 @@ function BoardInner({ today }: { today: string }) {
               </button>
             </div>
           </header>
+          <nav className="m-nav" aria-label="보기 선택">
+            {navMain.map(([k, , label, n]) => (
+              <button key={k} className="chip" aria-current={view === k} onClick={() => setView(k)}>
+                {label} <span className="cnt">{n}</span>
+              </button>
+            ))}
+            {(Object.keys(CATEGORIES) as Category[]).map((c) => (
+              <button key={c} className="chip" aria-current={view === c} onClick={() => setView(c)}>
+                {CATEGORIES[c]} <span className="cnt">{counts[c]}</span>
+              </button>
+            ))}
+          </nav>
 
           <div className="content">
             {view === "all" && (
@@ -290,7 +303,7 @@ function BoardInner({ today }: { today: string }) {
                 <label className="f" htmlFor="region">지역
                   <select id="region" value={region} onChange={(e) => setRegion(e.target.value)}>
                     <option value="">전국 · 모든 지역</option>
-                    {["서울", "경기", "인천", "부산", "대구", "대전", "광주", "온라인"].map((r) => <option key={r}>{r}</option>)}
+                    {REGION_OPTIONS.map((r) => <option key={r}>{r}</option>)}
                   </select>
                 </label>
                 <label className="check" htmlFor="weekOnly"><input type="checkbox" id="weekOnly" checked={weekOnly} onChange={(e) => setWeekOnly(e.target.checked)} />7일 이내 마감</label>
