@@ -48,7 +48,15 @@ export type Posting = {
   documents: string[];
   essayQuestions: string[];
   url: string | null;
-  source: "sample" | "paste" | "collector";
+  /**
+   * sample: 예시, paste: 사용자가 붙여넣고 AI가 정리, collector: 목록에서 링크만 수집,
+   * agent: Claude가 원문 상세 페이지를 읽고 정리(data/postings.json)
+   */
+  source: "sample" | "paste" | "collector" | "agent";
+  /** 원문을 한두 문장으로 요약 (공모전·청약·정책처럼 자격요건 목록이 없는 공고에 유용) */
+  summary?: string;
+  /** 원문을 마지막으로 확인한 날(ISO) */
+  checkedAt?: string;
   /** 예시 데이터 표시용 */
   isSample?: boolean;
   addedAt: string;

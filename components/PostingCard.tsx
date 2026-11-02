@@ -56,6 +56,7 @@ export function PostingCard({ posting: p, today, pinned, onOpen, onTogglePin }: 
           <span className={`badge ${badge.cls}`}>{badge.label}</span>
           {p.isSample && <span className="tag-sample">예시</span>}
           {p.source === "collector" && <span className="tag-collected">자동 수집</span>}
+          {p.source === "agent" && <span className="tag-collected tag-agent">AI 정리</span>}
         </span>
         <button
           className="pinbtn"
@@ -76,8 +77,8 @@ export function PostingCard({ posting: p, today, pinned, onOpen, onTogglePin }: 
         {p.role && <span>{p.role}</span>}
         {p.employment && <span>{p.employment}</span>}
       </div>
-      {summary ? (
-        <div className="c-sum">{summary}</div>
+      {summary || p.summary ? (
+        <div className="c-sum">{summary || p.summary}</div>
       ) : (
         p.source === "collector" && <div className="c-sum">목록에서 모은 공고예요. 마감일과 자격은 원문에서 확인하세요.</div>
       )}

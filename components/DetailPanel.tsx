@@ -112,6 +112,12 @@ export function DetailPanel({ posting: p, pin, today, onClose, onTogglePin, onTo
             {p.documents.length > 0 && (<><dt>제출 서류</dt><dd>{p.documents.join(", ")}</dd></>)}
           </dl>
 
+          {p.summary && (
+            <section className="p-section">
+              <h3>요약</h3>
+              <p className="p-sum">{p.summary}</p>
+            </section>
+          )}
           {p.requirements.length > 0 && (
             <section className="p-section">
               <h3>자격요건</h3>
@@ -135,6 +141,8 @@ export function DetailPanel({ posting: p, pin, today, onClose, onTogglePin, onTo
             {p.source === "sample" && "화면을 보여주기 위한 예시 공고예요."}
             {p.source === "collector" && "공개 공고 목록에서 자동으로 모은 공고예요. 마감일과 지원 자격은 원문에서 확인하세요."}
             {p.source === "paste" && "붙여넣은 공고를 AI가 정리했어요. 중요한 내용은 원문과 한 번 더 확인하세요."}
+            {p.source === "agent" &&
+              `Claude가 원문을 읽고 정리한 공고예요${p.checkedAt ? ` (${formatShort(p.checkedAt)} 확인)` : ""}. 마감일과 자격은 지원 전에 원문에서 한 번 더 확인하세요.`}
             {onDelete && (
               <>
                 {" "}

@@ -87,6 +87,25 @@ export function cleanHtml(s = ""): string {
     .trim();
 }
 
+/** 수집기와 같은 규칙으로 공고 id를 만든다. 같은 공고면 목록 수집분과 AI 정리분의 id가 같아진다. */
+export function idFor(sourceId: string, url: string, title = ""): string {
+  const source = SOURCES.find((s) => s.id === sourceId);
+  let key: string | null = null;
+  try {
+    key = source ? new URL(url).searchParams.get(source.match.slice(0, -1)) : null;
+  } catch {}
+  if (key) return `${sourceId}-${key}`;
+  // 상세 주소가 없어 목록 주소를 쓰는 공고도 있으니 제목까지 섞어 구분한다
+  return `${sourceId}-${hash(`${url}|${title}`)}`;
+}
+
+/** 짧고 안정적인 문자열 해시(djb2) */
+function hash(text: string): string {
+  let h = 5381;
+  for (let i = 0; i < text.length; i++) h = ((h << 5) + h + text.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+
 export function parseList(html: string, source: Source, today: string): Posting[] {
   const results = new Map<string, Posting>();
   const origin = new URL(source.url).origin;

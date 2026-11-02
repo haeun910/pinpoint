@@ -18,6 +18,7 @@ type View = "all" | Category | "pins";
 type SourceStatus = { source: string; ok: boolean; count: number; message?: string };
 
 const SOURCE_NAMES: Record<string, string> = {
+  agent: "Claude 정리",
   naver: "NAVER Careers",
   alio: "잡알리오",
   lh: "LH청약플러스",
