@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { daysUntil, ddayLabel, formatShort } from "@/lib/dates.ts";
+import { label, type Match } from "@/lib/experience.ts";
 import { STAGES, type Pin, type Posting, type Stage } from "@/lib/types.ts";
 import { Icon } from "./Icons.tsx";
 import { badgeFor } from "./PostingCard.tsx";
@@ -18,9 +19,13 @@ type Props = {
   onDelete?: () => void;
   /** 링크만 있는 공고를 AI로 자세히 정리. 실패하면 오류 문구를 돌려준다 */
   onRefine?: () => Promise<string | null>;
+  /** 채용 공고일 때 경험 보관함에서 고른 추천 경험 */
+  matches?: Match[];
+  hasExperiences?: boolean;
+  onOpenVault?: () => void;
 };
 
-export function DetailPanel({ posting: p, pin, today, onClose, onTogglePin, onToggleItem, onStage, onDelete, onRefine }: Props) {
+export function DetailPanel({ posting: p, pin, today, onClose, onTogglePin, onToggleItem, onStage, onDelete, onRefine, matches, hasExperiences, onOpenVault }: Props) {
   const [refining, setRefining] = useState(false);
   const [refineError, setRefineError] = useState<string | null>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -126,6 +131,27 @@ export function DetailPanel({ posting: p, pin, today, onClose, onTogglePin, onTo
                 </ul>
               </section>
             </>
+          )}
+
+          {matches && (
+            <section className="p-section" aria-label="추천 경험">
+              <h3>이 공고에 꺼낼 내 경험</h3>
+              {matches.length > 0 ? (
+                <ul className="xp-match">
+                  {matches.map((m) => (
+                    <li key={m.experience.id}>
+                      <b>{m.experience.title}</b>
+                      <small>겹치는 키워드: {m.matched.map(label).join(", ")}</small>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="xp-cta">
+                  {hasExperiences ? "자격요건·우대사항과 겹치는 경험이 아직 없어요. 경험에 쓴 기술을 더 적어 보세요. " : "경험 보관함에 경험을 적어 두면 공고마다 맞는 경험을 골라 드려요. "}
+                  {onOpenVault && <button onClick={onOpenVault}>경험 보관함 열기</button>}
+                </p>
+              )}
+            </section>
           )}
 
           <dl>

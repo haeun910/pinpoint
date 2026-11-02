@@ -4,17 +4,19 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { buildChecklist } from "@/lib/checklist.ts";
 import { looksLikeTech } from "@/lib/collect.ts";
 import { addDays, daysUntil, toISODate } from "@/lib/dates.ts";
+import { type Experience, matchExperiences } from "@/lib/experience.ts";
 import { REGION_OPTIONS, regionMatches } from "@/lib/region.ts";
 import { samplePostings } from "@/lib/sample.ts";
 import { useStoredState } from "@/lib/store.ts";
 import { CATEGORIES, COMPANY_TYPES, type Category, type CompanyType, type Pin, type Posting, type Sector } from "@/lib/types.ts";
 import { AddDialog } from "./AddDialog.tsx";
 import { DetailPanel } from "./DetailPanel.tsx";
+import { Vault } from "./Vault.tsx";
 import { Icon, IconSprite, Logo } from "./Icons.tsx";
 import { MapCanvas } from "./MapCanvas.tsx";
 import { BADGE, PostingCard } from "./PostingCard.tsx";
 
-type View = "all" | Category | "pins";
+type View = "all" | Category | "pins" | "vault";
 type SourceStatus = { source: string; ok: boolean; count: number; message?: string };
 
 const SOURCE_NAMES: Record<string, string> = {
@@ -52,6 +54,7 @@ function BoardInner({ today }: { today: string }) {
   const [saved, setSaved] = useStoredState<Posting[]>("pinpoint.postings.v1", []);
   const [pins, setPins] = useStoredState<Pin[]>("pinpoint.pins.v1", []);
   const [showSamples, setShowSamples] = useStoredState<boolean>("pinpoint.showSamples", true);
+  const [experiences, setExperiences] = useStoredState<Experience[]>("pinpoint.experiences.v1", []);
   const [collected, setCollected] = useState<Posting[]>([]);
   const [statuses, setStatuses] = useState<SourceStatus[] | null>(null);
 
@@ -179,8 +182,9 @@ function BoardInner({ today }: { today: string }) {
   const navMain: [View, string, string, number | null][] = [
     ["all", "i-grid", "모든 공고", counts.all],
     ["pins", "i-pin", "핀한 공고", pins.length],
+    ["vault", "i-stack", "경험 보관함", experiences.length],
   ];
-  const crumb = view === "all" ? "모든 공고" : view === "pins" ? "핀한 공고" : CATEGORIES[view];
+  const crumb = view === "all" ? "모든 공고" : view === "pins" ? "핀한 공고" : view === "vault" ? "경험 보관함" : CATEGORIES[view];
 
   return (
     <>
@@ -256,6 +260,15 @@ function BoardInner({ today }: { today: string }) {
           </nav>
 
           <div className="content">
+            {view === "vault" ? (
+              <Vault
+                experiences={experiences}
+                today={today}
+                onSave={(e) => setExperiences((prev) => (prev.some((x) => x.id === e.id) ? prev.map((x) => (x.id === e.id ? e : x)) : [e, ...prev]))}
+                onDelete={(id) => setExperiences((prev) => prev.filter((x) => x.id !== id))}
+              />
+            ) : (
+            <>
             {view === "all" && (
               <section className="hero">
                 <div className="hero-txt">
@@ -393,6 +406,8 @@ function BoardInner({ today }: { today: string }) {
                 )}
               </div>
             </section>
+            </>
+            )}
           </div>
         </div>
       </div>
@@ -408,6 +423,12 @@ function BoardInner({ today }: { today: string }) {
             setPins((prev) => prev.map((x) => (x.postingId === open.id ? { ...x, checklist: x.checklist.map((i) => (i.id === itemId ? { ...i, done: !i.done } : i)) } : x)))
           }
           onRefine={open.source === "collector" && open.url ? () => refine(open) : undefined}
+          matches={open.category === "job" ? matchExperiences(open, experiences) : undefined}
+          hasExperiences={experiences.length > 0}
+          onOpenVault={() => {
+            setOpenId(null);
+            setView("vault");
+          }}
           onStage={(stage) => setPins((prev) => prev.map((x) => (x.postingId === open.id ? { ...x, stage } : x)))}
           onDelete={
             open.source === "paste"
