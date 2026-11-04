@@ -8,7 +8,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "node --test --experimental-strip-types lib/*.test.ts",
-    "check:data": "node --experimental-strip-types scripts/check-data.ts"
+    "check:data": "node --experimental-strip-types scripts/check-data.ts",
+    "check:work24": "node --env-file-if-exists=.env.local --experimental-strip-types scripts/check-work24.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.3.0",
